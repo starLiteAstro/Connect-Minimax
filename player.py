@@ -39,9 +39,11 @@ class Player:
 		self.numPruned = 0 # Use this to track the number of times you prune
 		self.iterative = False # Is set to True when running iterative deepening
 		self.numExpandedPerMove = 0 # Tracks the number of nodes expanded per move
+		self.table = {}
 
 	def getMove(self, gameBoard):
 		self.numExpandedPerMove = 0
+		self.initTable(gameBoard)
 		if self.name == 'X':
 			return self.minimax(gameBoard, -1, True)[0] # Set depth to -1 to run a full search (no depth cutoff)
 			#return self.minimaxIterative(gameBoard) # Uncomment this to run iterative deepening
@@ -50,6 +52,7 @@ class Player:
 
 	def getMoveAlphaBeta(self, gameBoard):
 		self.numExpandedPerMove = 0
+		self.initTable(gameBoard)
 		if self.name == 'X':
 			#return self.minimaxAB(gameBoard, -1, True, -math.inf, math.inf)[0] # Set depth to -1 to run a full search (no depth cutoff)
 			return self.minimaxABIterative(gameBoard) # Uncomment this to run iterative deepening
@@ -197,3 +200,23 @@ class Player:
 						self.numPruned += 1
 						break
 			return column, minEval
+
+	def initTable(self, gameBoard):
+		maxCol = gameBoard.numColumns
+		maxRow = gameBoard.numRows
+		for i in range(maxCol):
+			for j in range(maxRow):
+				for k in range(2):
+					self.table[i][j][k] = random.randint(0, 2 ** 64 - 1)
+
+
+	def getTableHash(self, gameBoard):
+		maxCol = gameBoard.numColumns
+		maxRow = gameBoard.numRows
+		hash = 0
+		for i in range(maxCol):
+			for j in range(maxRow):
+				if gameBoard.board[j][i] != ' ':
+					piece = gameBoard.checkSpace(i, j).value
+					hash ^= self.table[i][j][piece]
+		return hash
