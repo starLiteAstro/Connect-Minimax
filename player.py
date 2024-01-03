@@ -40,6 +40,7 @@ class Player:
 		self.iterative = False # Is set to True when running iterative deepening
 		self.numExpandedPerMove = 0 # Tracks the number of nodes expanded per move
 		self.table = {}
+		self.cacheHits = 0 # Tracks the number of times the transposition table finds a match
 
 	def getMove(self, gameBoard):
 		self.numExpandedPerMove = 0
@@ -67,7 +68,7 @@ class Player:
 		while self.numExpandedPerMove < limit: # Run until the limit is reached/exceeded
 			move = self.minimax(gameBoard, depth, True)[0]
 			depth += 1
-			print("Depth", depth, "numExpanded", self.numExpandedPerMove)
+			#print("Depth", depth, "numExpanded", self.numExpandedPerMove)
 		return move
 
 	def minimaxABIterative(self, gameBoard):
@@ -78,10 +79,12 @@ class Player:
 		while self.numExpandedPerMove < limit:
 			move = self.minimaxAB(gameBoard, depth, True, -math.inf, math.inf)[0]
 			depth += 1
-			print("Depth", depth, "numExpanded", self.numExpandedPerMove)
+			#print("Depth", depth, "numExpanded", self.numExpandedPerMove)
 		return move
 
 	def minimax(self, gameBoard, depth, maxingPlayer):
+		maxCol = gameBoard.numColumns
+		maxRow = gameBoard.numRows
 		if depth == 0 or gameBoard.checkWin():
 			if gameBoard.lastPlay[2] == 'X':
 				if depth <= 0 or self.iterative:
@@ -95,9 +98,7 @@ class Player:
 					return None, -1 / depth
 		if gameBoard.checkFull():
 			return None, 0
-		
-		maxCol = gameBoard.numColumns
-		maxRow = gameBoard.numRows
+
 		colOrder = []
 		for i in range(maxCol):
 			colOrder.append(math.ceil(maxCol // 2 + (1 - 2 * (i % 2)) * (i + 1) // 2))
@@ -116,7 +117,7 @@ class Player:
 					eval = self.minimax(temp, depth, False)[1]
 					if eval > maxEval:
 						column = col
-					maxEval = max(maxEval, eval)
+						maxEval = eval
 			return column, maxEval
 		else:
 			minEval = math.inf
@@ -130,8 +131,7 @@ class Player:
 					eval = self.minimax(temp, depth, True)[1]
 					if eval < minEval:
 						column = col
-					minEval = min(minEval, eval)
-			self.numExpandedPerMove = self.numExpanded
+						minEval = eval
 			return column, minEval
 
 	def minimaxAB(self, gameBoard, depth, maxingPlayer, alpha, beta):
@@ -169,16 +169,27 @@ class Player:
 					self.numExpandedPerMove += 1
 					temp = gameBoard.copy()
 					temp.addPiece(col, 'X')
-					eval = self.minimaxAB(temp, depth, False, alpha, beta)[1]
+					index = random.randint(0, maxCol * maxRow - 1)
+					if self.table[index][0] != str(gameBoard):
+						eval = self.minimaxAB(temp, depth, False, alpha, beta)[1]
+					else:
+						self.cacheHits += 1
+						column = self.table[index][1]
+						eval = self.table[index][2]
+						if beta > eval:
+							beta = eval
+							if beta <= alpha:
+								return column, beta
 					if eval > maxEval:
 						#print("MAX: Old column", column, ", new column", col, "depth", depth)
 						column = col
-					maxEval = max(maxEval, eval)
+						maxEval = eval
 					#print("MaxEval", maxEval, "alpha", alpha, "beta", beta)
 					alpha = max(alpha, maxEval)
 					if beta <= alpha:
 						self.numPruned += 1
 						break
+					self.storeHash(index, temp, column, alpha)
 			return column, maxEval
 		else:
 			minEval = math.inf
@@ -193,7 +204,7 @@ class Player:
 					if eval < minEval:
 						#print("MIN: Old column", column, ", new column", col, "depth", depth)
 						column = col
-					minEval = min(minEval, eval)
+						minEval = eval
 					#print("MinEval", minEval, "alpha", alpha, "beta", beta)
 					beta = min(beta, minEval)
 					if beta <= alpha:
@@ -202,21 +213,11 @@ class Player:
 			return column, minEval
 
 	def initTable(self, gameBoard):
-		maxCol = gameBoard.numColumns
-		maxRow = gameBoard.numRows
-		for i in range(maxCol):
-			for j in range(maxRow):
-				for k in range(2):
-					self.table[i][j][k] = random.randint(0, 2 ** 64 - 1)
+		for i in range(gameBoard.numColumns * gameBoard.numRows):
+			self.table[i] = [0, 0, 0]
 
+	def storeHash(self, index, gameBoard, col, alpha):
+		self.table[index] = [str(gameBoard), col, alpha]
 
-	def getTableHash(self, gameBoard):
-		maxCol = gameBoard.numColumns
-		maxRow = gameBoard.numRows
-		hash = 0
-		for i in range(maxCol):
-			for j in range(maxRow):
-				if gameBoard.board[j][i] != ' ':
-					piece = gameBoard.checkSpace(i, j).value
-					hash ^= self.table[i][j][piece]
-		return hash
+	def getHash(self, index):
+		return self.table[index]

@@ -6,7 +6,7 @@ import randomPlayer
 from datetime import datetime
 import time
 
-games = 10
+games = 1
 wins = 0
 draws = 0
 losses = 0
@@ -31,7 +31,8 @@ for i in range(games):
     # Instead of randomly seeding, you can comment out the following line to seed the random player and
     # test with a consistent opponent
     #p2 = randomPlayer.RandomPlayer("O", seed)
-    p2 = randomPlayer.userPlayer("O")
+    p2 = randomPlayer.RandomPlayer("O", 42)
+    #p2 = randomPlayer.userPlayer("O")
 
     # The arguments to game.Game specify the two players, the number of rows, the number of columns
     # and the number of pieces that need to be placed in a line in order to win.
@@ -56,6 +57,7 @@ for i in range(games):
 end = time.time()
 print(f"Runtime (ms): {(end - start) * 10**3} ms")
 print(f"Runtime (s): {(end - start)} s")
+print(f"Cache hits: {p1.cacheHits}")
 print(f"Games: {games}")
 print(f"Wins: {wins} ({wins / games * 100}%)")
 print(f"Draws: {draws} ({draws / games * 100}%)")
