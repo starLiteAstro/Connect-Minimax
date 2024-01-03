@@ -6,7 +6,7 @@ import randomPlayer
 from datetime import datetime
 import time
 
-games = 1
+games = 10
 wins = 0
 draws = 0
 losses = 0
@@ -30,7 +30,7 @@ for i in range(games):
     # p2 = player.Player("O")
     # Instead of randomly seeding, you can comment out the following line to seed the random player and
     # test with a consistent opponent
-    # p2 = randomPlayer.RandomPlayer("O", seed)
+    #p2 = randomPlayer.RandomPlayer("O", seed)
     p2 = randomPlayer.userPlayer("O")
 
     # The arguments to game.Game specify the two players, the number of rows, the number of columns
