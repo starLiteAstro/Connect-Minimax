@@ -51,8 +51,8 @@ class Player:
 	def getMoveAlphaBeta(self, gameBoard):
 		self.numExpandedPerMove = 0
 		if self.name == 'X':
-			#return self.minimaxAB(gameBoard, -1, True, -math.inf, math.inf)[0] # Set depth to -1 to run a full search (no depth cutoff)
-			return self.minimaxABIterative(gameBoard) # Uncomment this to run iterative deepening
+			return self.minimaxAB(gameBoard, -1, True, -math.inf, math.inf)[0] # Set depth to -1 to run a full search (no depth cutoff)
+			#return self.minimaxABIterative(gameBoard) # Uncomment this to run iterative deepening
 		else:
 			return self.minimaxAB(gameBoard, -1, False, -math.inf, math.inf)[0] # For player 2 minimaxAB AI
 	
@@ -64,7 +64,7 @@ class Player:
 		while self.numExpandedPerMove < limit: # Run until the limit is reached/exceeded
 			move = self.minimax(gameBoard, depth, True)[0]
 			depth += 1
-			print("Depth", depth, "numExpanded", self.numExpandedPerMove)
+			#print("Depth", depth, "numExpanded", self.numExpandedPerMove)
 		return move
 
 	def minimaxABIterative(self, gameBoard):
@@ -75,7 +75,7 @@ class Player:
 		while self.numExpandedPerMove < limit:
 			move = self.minimaxAB(gameBoard, depth, True, -math.inf, math.inf)[0]
 			depth += 1
-			print("Depth", depth, "numExpanded", self.numExpandedPerMove)
+			#print("Depth", depth, "numExpanded", self.numExpandedPerMove)
 		return move
 
 	def minimax(self, gameBoard, depth, maxingPlayer):
