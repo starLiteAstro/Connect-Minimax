@@ -10,7 +10,6 @@ games = 1
 wins = 0
 draws = 0
 losses = 0
-start = time.time()
 
 for i in range(games):
     # This script allows you to test your solution.
@@ -30,8 +29,8 @@ for i in range(games):
     # p2 = player.Player("O")
     # Instead of randomly seeding, you can comment out the following line to seed the random player and
     # test with a consistent opponent
-    #p2 = randomPlayer.RandomPlayer("O", seed)
-    p2 = randomPlayer.RandomPlayer("O", 42)
+    p2 = randomPlayer.RandomPlayer("O", seed)
+    #p2 = randomPlayer.RandomPlayer("O", 42)
     #p2 = randomPlayer.userPlayer("O")
 
     # The arguments to game.Game specify the two players, the number of rows, the number of columns
@@ -41,7 +40,7 @@ for i in range(games):
     # g = game.Game(p1, p2, 4, 5, 3)
     # g = game.Game(p1, p2, 4, 4, 4)
     # g = game.Game(p1, p2, 4, 4, 3)
-    g = game.Game(p1, p2, 6, 7, 4)
+    g = game.Game(p1, p2, 4, 4, 3)
 
 # You can pass 'True' to the playGame() method to test your alpha-beta pruning approach, i.e., to make
 # player 1 use alpha-beta. If you want player 2 to use alpha-beta you will need to ensure 
@@ -54,9 +53,6 @@ for i in range(games):
     else:
         draws += 1
 
-end = time.time()
-print(f"Runtime (ms): {(end - start) * 10**3} ms")
-print(f"Runtime (s): {(end - start)} s")
 print(f"Cache hits: {p1.cacheHits}")
 print(f"Games: {games}")
 print(f"Wins: {wins} ({wins / games * 100}%)")
