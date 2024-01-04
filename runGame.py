@@ -45,7 +45,7 @@ for i in range(games):
 # You can pass 'True' to the playGame() method to test your alpha-beta pruning approach, i.e., to make
 # player 1 use alpha-beta. If you want player 2 to use alpha-beta you will need to ensure 
 # that you create player 2 accordingly. 
-    val = g.playGame(False)
+    val = g.playGame(True)
     if val == 1:
         wins += 1
     elif val == -1:
@@ -54,4 +54,4 @@ for i in range(games):
         draws += 1
 
 print(f"Cache hits: {p1.cacheHits}")
-print(f"Games: {games}\nWins: {wins} ({wins / games * 100}%)\nDraws: {draws} ({draws / games * 100}%\nLosses: {losses} ({losses / games * 100}%)")
+print(f"Games: {games}\nWins: {wins} ({wins / games * 100}%)\nDraws: {draws} ({draws / games * 100}%)\nLosses: {losses} ({losses / games * 100}%)")

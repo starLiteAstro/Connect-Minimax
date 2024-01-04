@@ -23,7 +23,7 @@ class Game:
 		while not won and not full:
 			# Get the current player, and update the index
 			currPlayer = self.listOfPlayers[index]
-			print("Moving with player " + str(currPlayer.name))
+			#print("Moving with player " + str(currPlayer.name))
 
 			if index == 0 and pruning:
 				move = currPlayer.getMoveAlphaBeta(self.gameBoard.copy())
@@ -35,7 +35,7 @@ class Game:
 				won = self.gameBoard.checkWin()
 				full = self.gameBoard.checkFull()
 				# Uncomment the following line to print each move
-				self.gameBoard.printBoard()
+				#self.gameBoard.printBoard()
 			else:
 				print("Player made illegal move. Turn lost.")
 
