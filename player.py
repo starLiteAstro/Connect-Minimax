@@ -44,41 +44,45 @@ class Player:
 		self.numExpandedPerMove = 0
 		if self.name == 'X':
 			return self.minimax(gameBoard, -1, True)[0] # Set depth to -1 to run a full search (no depth cutoff)
-			#return self.minimaxIterative(gameBoard) # Uncomment this to run iterative deepening
+			#return self.minimaxIterative(gameBoard, True) # Uncomment this to run iterative deepening
 		else:
 			return self.minimax(gameBoard, -1, False)[0] # For player 2 minimax AI
+			#return self.minimaxIterative(gameBoard, False) # Uncomment this to run iterative deepening for player 2
 
 	def getMoveAlphaBeta(self, gameBoard):
 		self.numExpandedPerMove = 0
 		if self.name == 'X':
 			return self.minimaxAB(gameBoard, -1, True, -math.inf, math.inf)[0] # Set depth to -1 to run a full search (no depth cutoff)
-			#return self.minimaxABIterative(gameBoard) # Uncomment this to run iterative deepening
+			#return self.minimaxABIterative(gameBoard, True) # Uncomment this to run iterative deepening
 		else:
 			return self.minimaxAB(gameBoard, -1, False, -math.inf, math.inf)[0] # For player 2 minimaxAB AI
+			#return self.minimaxABIterative(gameBoard, False) # Uncomment this to run iterative deepening for player 2
 	
-	def minimaxIterative(self, gameBoard):
+	def minimaxIterative(self, gameBoard, maxingPlayer):
 		self.iterative = True
 		limit = 10000 # Set limit on the number of nodes expanded per move
 		depth = 2
 		move = random.randint(0, gameBoard.numColumns - 1)
 		while self.numExpandedPerMove < limit: # Run until the limit is reached/exceeded
-			move = self.minimax(gameBoard, depth, True)[0]
+			move = self.minimax(gameBoard, depth, maxingPlayer)[0]
 			depth += 1
 			#print("Depth", depth, "numExpanded", self.numExpandedPerMove)
 		return move
 
-	def minimaxABIterative(self, gameBoard):
+	def minimaxABIterative(self, gameBoard, maxingPlayer):
 		self.iterative = True
 		limit = 10000
 		depth = 2
 		move = random.randint(0, gameBoard.numColumns - 1)
 		while self.numExpandedPerMove < limit:
-			move = self.minimaxAB(gameBoard, depth, True, -math.inf, math.inf)[0]
+			move = self.minimaxAB(gameBoard, depth, maxingPlayer, -math.inf, math.inf)[0]
 			depth += 1
 			#print("Depth", depth, "numExpanded", self.numExpandedPerMove)
 		return move
 
 	def minimax(self, gameBoard, depth, maxingPlayer):
+		maxCol = gameBoard.numColumns
+		maxRow = gameBoard.numRows
 		if depth == 0 or gameBoard.checkWin():
 			if gameBoard.lastPlay[2] == 'X':
 				if depth <= 0 or self.iterative:
@@ -92,9 +96,7 @@ class Player:
 					return None, -1 / depth
 		if gameBoard.checkFull():
 			return None, 0
-		
-		maxCol = gameBoard.numColumns
-		maxRow = gameBoard.numRows
+
 		colOrder = []
 		for i in range(maxCol):
 			colOrder.append(math.ceil(maxCol // 2 + (1 - 2 * (i % 2)) * (i + 1) // 2))
@@ -113,12 +115,12 @@ class Player:
 					eval = self.minimax(temp, depth, False)[1]
 					if eval > maxEval:
 						column = col
-					maxEval = max(maxEval, eval)
+						maxEval = eval
 			return column, maxEval
 		else:
 			minEval = math.inf
 			column = random.randint(0, maxCol - 1)
-			for col in range(maxCol):
+			for col in colOrder:
 				if gameBoard.colFills[col] < maxRow:
 					self.numExpanded += 1
 					self.numExpandedPerMove += 1
@@ -127,11 +129,12 @@ class Player:
 					eval = self.minimax(temp, depth, True)[1]
 					if eval < minEval:
 						column = col
-					minEval = min(minEval, eval)
-			self.numExpandedPerMove = self.numExpanded
+						minEval = eval
 			return column, minEval
 
 	def minimaxAB(self, gameBoard, depth, maxingPlayer, alpha, beta):
+		maxCol = gameBoard.numColumns
+		maxRow = gameBoard.numRows
 		#print("Depth", depth, "maxingPlayer", maxingPlayer, "alpha", alpha, "beta", beta)
 		#gameBoard.printBoard()
 		if depth == 0 or gameBoard.checkWin():
@@ -149,8 +152,6 @@ class Player:
 		if gameBoard.checkFull():
 				return None, 0
 
-		maxCol = gameBoard.numColumns
-		maxRow = gameBoard.numRows
 		colOrder = []
 		for i in range(maxCol):
 				colOrder.append(math.ceil(maxCol // 2 + (1 - 2 * (i % 2)) * (i + 1) // 2))
@@ -180,7 +181,7 @@ class Player:
 		else:
 			minEval = math.inf
 			column = random.randint(0, maxCol - 1)
-			for col in range(maxCol):
+			for col in colOrder:
 				if gameBoard.colFills[col] < maxRow:
 					self.numExpanded += 1
 					self.numExpandedPerMove += 1
