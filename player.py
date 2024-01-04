@@ -87,7 +87,7 @@ class Player:
 		if index in self.table:
 			self.cacheHits += 1
 			return self.table[index][0], self.table[index][1]
-
+    
 		if depth == 0 or gameBoard.checkWin():
 			if gameBoard.lastPlay[2] == 'X':
 				if depth <= 0 or self.iterative:
@@ -129,7 +129,7 @@ class Player:
 		else:
 			minEval = math.inf
 			column = random.randint(0, maxCol - 1)
-			for col in range(maxCol):
+			for col in colOrder:
 				if gameBoard.colFills[col] < maxRow:
 					self.numExpanded += 1
 					self.numExpandedPerMove += 1
@@ -164,7 +164,7 @@ class Player:
 		if gameBoard.checkFull():
 			return None, 0
 
-		maxCol = gameBoard.numColumns
+    maxCol = gameBoard.numColumns
 		maxRow = gameBoard.numRows
 		colOrder = []
 		for i in range(maxCol):
@@ -196,7 +196,7 @@ class Player:
 		else:
 			minEval = math.inf
 			column = random.randint(0, maxCol - 1)
-			for col in range(maxCol):
+			for col in colOrder:
 				if gameBoard.colFills[col] < maxRow:
 					self.numExpanded += 1
 					self.numExpandedPerMove += 1
