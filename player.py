@@ -170,7 +170,7 @@ class Player:
 					if eval > maxEval:
 						#print("MAX: Old column", column, ", new column", col, "depth", depth)
 						column = col
-					maxEval = max(maxEval, eval)
+						maxEval = eval
 					#print("MaxEval", maxEval, "alpha", alpha, "beta", beta)
 					alpha = max(alpha, maxEval)
 					if beta <= alpha:
@@ -190,7 +190,7 @@ class Player:
 					if eval < minEval:
 						#print("MIN: Old column", column, ", new column", col, "depth", depth)
 						column = col
-					minEval = min(minEval, eval)
+						minEval = eval
 					#print("MinEval", minEval, "alpha", alpha, "beta", beta)
 					beta = min(beta, minEval)
 					if beta <= alpha:
