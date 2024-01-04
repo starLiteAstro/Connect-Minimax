@@ -4,7 +4,6 @@ import player
 import randomPlayer
 # Note that you can comment out the following if you don't want to seed the random player differently each run
 from datetime import datetime
-import time
 
 games = 1
 wins = 0
@@ -12,6 +11,7 @@ draws = 0
 losses = 0
 
 for i in range(games):
+    print(f"\n ---- Game {i + 1} ----")
     # This script allows you to test your solution.
     # Your coursework implementation must always be player 1.
     # You should consider changing player 2 to use a minimax approach for evaluation.
@@ -40,7 +40,7 @@ for i in range(games):
     # g = game.Game(p1, p2, 4, 5, 3)
     # g = game.Game(p1, p2, 4, 4, 4)
     # g = game.Game(p1, p2, 4, 4, 3)
-    g = game.Game(p1, p2, 4, 4, 3)
+    g = game.Game(p1, p2, 6, 7, 2)
 
 # You can pass 'True' to the playGame() method to test your alpha-beta pruning approach, i.e., to make
 # player 1 use alpha-beta. If you want player 2 to use alpha-beta you will need to ensure 
@@ -54,7 +54,4 @@ for i in range(games):
         draws += 1
 
 print(f"Cache hits: {p1.cacheHits}")
-print(f"Games: {games}")
-print(f"Wins: {wins} ({wins / games * 100}%)")
-print(f"Draws: {draws} ({draws / games * 100}%)")
-print(f"Losses: {losses} ({losses / games * 100}%)")
+print(f"Games: {games}\nWins: {wins} ({wins / games * 100}%)\nDraws: {draws} ({draws / games * 100}%\nLosses: {losses} ({losses / games * 100}%)")
