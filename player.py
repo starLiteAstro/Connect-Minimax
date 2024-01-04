@@ -39,23 +39,25 @@ class Player:
 		self.numPruned = 0 # Use this to track the number of times you prune
 		self.iterative = False # Is set to True when running iterative deepening
 		self.numExpandedPerMove = 0 # Tracks the number of nodes expanded per move
+		self.table = {} # Transposition table
+		self.cacheHits = 0 # Tracks the number of times the transposition table finds a match
 
 	def getMove(self, gameBoard):
 		self.numExpandedPerMove = 0
 		if self.name == 'X':
-			return self.minimax(gameBoard, -1, True)[0] # Set depth to -1 to run a full search (no depth cutoff)
+			return self.minimax(gameBoard, 8, True)[0] # Set depth to -1 to run a full search (no depth cutoff)
 			#return self.minimaxIterative(gameBoard, True) # Uncomment this to run iterative deepening
 		else:
-			return self.minimax(gameBoard, -1, False)[0] # For player 2 minimax AI
+			return self.minimax(gameBoard, 8, False)[0] # For player 2 minimax AI
 			#return self.minimaxIterative(gameBoard, False) # Uncomment this to run iterative deepening for player 2
 
 	def getMoveAlphaBeta(self, gameBoard):
 		self.numExpandedPerMove = 0
 		if self.name == 'X':
-			return self.minimaxAB(gameBoard, -1, True, -math.inf, math.inf)[0] # Set depth to -1 to run a full search (no depth cutoff)
+			return self.minimaxAB(gameBoard, 8, True, -math.inf, math.inf)[0] # Set depth to -1 to run a full search (no depth cutoff)
 			#return self.minimaxABIterative(gameBoard, True) # Uncomment this to run iterative deepening
 		else:
-			return self.minimaxAB(gameBoard, -1, False, -math.inf, math.inf)[0] # For player 2 minimaxAB AI
+			return self.minimaxAB(gameBoard, 8, False, -math.inf, math.inf)[0] # For player 2 minimaxAB AI
 			#return self.minimaxABIterative(gameBoard, False) # Uncomment this to run iterative deepening for player 2
 	
 	def minimaxIterative(self, gameBoard, maxingPlayer):
@@ -81,8 +83,11 @@ class Player:
 		return move
 
 	def minimax(self, gameBoard, depth, maxingPlayer):
-		maxCol = gameBoard.numColumns
-		maxRow = gameBoard.numRows
+		index = str(gameBoard.gameBoard)
+		if index in self.table:
+			self.cacheHits += 1
+			return self.table[index][0], self.table[index][1]
+    
 		if depth == 0 or gameBoard.checkWin():
 			if gameBoard.lastPlay[2] == 'X':
 				if depth <= 0 or self.iterative:
@@ -97,9 +102,11 @@ class Player:
 		if gameBoard.checkFull():
 			return None, 0
 
+		maxCol = gameBoard.numColumns
+		maxRow = gameBoard.numRows
 		colOrder = []
 		for i in range(maxCol):
-			colOrder.append(math.ceil(maxCol // 2 + (1 - 2 * (i % 2)) * (i + 1) // 2))
+			colOrder.append(math.ceil(maxCol // 2 + (1 - 2 * (i % 2)) * (i + 1) // 2)) # Order columns by middle first, then alternate
 		if depth > 0:
 			depth = depth - 1
 
@@ -116,6 +123,8 @@ class Player:
 					if eval > maxEval:
 						column = col
 						maxEval = eval
+			self.table[index] = [column, maxEval]
+			#print(f"column {column} maxEval {maxEval}")
 			return column, maxEval
 		else:
 			minEval = math.inf
@@ -130,13 +139,16 @@ class Player:
 					if eval < minEval:
 						column = col
 						minEval = eval
+			self.table[index] = [column, minEval]
+			#print(f"column {column} minEval {minEval}")
 			return column, minEval
 
 	def minimaxAB(self, gameBoard, depth, maxingPlayer, alpha, beta):
-		maxCol = gameBoard.numColumns
-		maxRow = gameBoard.numRows
-		#print("Depth", depth, "maxingPlayer", maxingPlayer, "alpha", alpha, "beta", beta)
-		#gameBoard.printBoard()
+		index = str(gameBoard.gameBoard)
+		if index in self.table:
+			self.cacheHits += 1
+			return self.table[index][0], self.table[index][1]
+
 		if depth == 0 or gameBoard.checkWin():
 			if gameBoard.lastPlay[2] == 'X':
 				if depth <= 0 or self.iterative:
@@ -150,8 +162,10 @@ class Player:
 					return None, -1 / depth
 
 		if gameBoard.checkFull():
-				return None, 0
+			return None, 0
 
+    maxCol = gameBoard.numColumns
+		maxRow = gameBoard.numRows
 		colOrder = []
 		for i in range(maxCol):
 				colOrder.append(math.ceil(maxCol // 2 + (1 - 2 * (i % 2)) * (i + 1) // 2))
@@ -177,6 +191,7 @@ class Player:
 					if beta <= alpha:
 						self.numPruned += 1
 						break
+			self.table[index] = [column, maxEval]
 			return column, maxEval
 		else:
 			minEval = math.inf
@@ -197,4 +212,5 @@ class Player:
 					if beta <= alpha:
 						self.numPruned += 1
 						break
+			self.table[index] = [column, minEval]
 			return column, minEval
