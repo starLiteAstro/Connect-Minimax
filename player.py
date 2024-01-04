@@ -44,7 +44,6 @@ class Player:
 
 	def getMove(self, gameBoard):
 		self.numExpandedPerMove = 0
-		self.initTable(gameBoard)
 		if self.name == 'X':
 			return self.minimax(gameBoard, -1, True)[0] # Set depth to -1 to run a full search (no depth cutoff)
 			#return self.minimaxIterative(gameBoard) # Uncomment this to run iterative deepening
@@ -53,10 +52,9 @@ class Player:
 
 	def getMoveAlphaBeta(self, gameBoard):
 		self.numExpandedPerMove = 0
-		self.initTable(gameBoard)
 		if self.name == 'X':
-			#return self.minimaxAB(gameBoard, -1, True, -math.inf, math.inf)[0] # Set depth to -1 to run a full search (no depth cutoff)
-			return self.minimaxABIterative(gameBoard) # Uncomment this to run iterative deepening
+			return self.minimaxAB(gameBoard, -1, True, -math.inf, math.inf)[0] # Set depth to -1 to run a full search (no depth cutoff)
+			#return self.minimaxABIterative(gameBoard) # Uncomment this to run iterative deepening
 		else:
 			return self.minimaxAB(gameBoard, -1, False, -math.inf, math.inf)[0] # For player 2 minimaxAB AI
 	
@@ -135,6 +133,11 @@ class Player:
 			return column, minEval
 
 	def minimaxAB(self, gameBoard, depth, maxingPlayer, alpha, beta):
+		maxCol = gameBoard.numColumns
+		maxRow = gameBoard.numRows
+		if str(gameBoard) in self.table:
+			self.cacheHits += 1
+			return self.table[str(gameBoard)][0], self.table[str(gameBoard)][1]
 		#print("Depth", depth, "maxingPlayer", maxingPlayer, "alpha", alpha, "beta", beta)
 		#gameBoard.printBoard()
 		if depth == 0 or gameBoard.checkWin():
@@ -152,8 +155,6 @@ class Player:
 		if gameBoard.checkFull():
 				return None, 0
 
-		maxCol = gameBoard.numColumns
-		maxRow = gameBoard.numRows
 		colOrder = []
 		for i in range(maxCol):
 				colOrder.append(math.ceil(maxCol // 2 + (1 - 2 * (i % 2)) * (i + 1) // 2))
@@ -170,16 +171,7 @@ class Player:
 					temp = gameBoard.copy()
 					temp.addPiece(col, 'X')
 					index = random.randint(0, maxCol * maxRow - 1)
-					if self.table[index][0] != str(gameBoard):
-						eval = self.minimaxAB(temp, depth, False, alpha, beta)[1]
-					else:
-						self.cacheHits += 1
-						column = self.table[index][1]
-						eval = self.table[index][2]
-						if beta > eval:
-							beta = eval
-							if beta <= alpha:
-								return column, beta
+					eval = self.minimaxAB(temp, depth, False, alpha, beta)[1]
 					if eval > maxEval:
 						#print("MAX: Old column", column, ", new column", col, "depth", depth)
 						column = col
@@ -189,7 +181,7 @@ class Player:
 					if beta <= alpha:
 						self.numPruned += 1
 						break
-					self.storeHash(index, temp, column, alpha)
+			self.table[str(gameBoard)] = [column, maxEval]
 			return column, maxEval
 		else:
 			minEval = math.inf
@@ -210,14 +202,5 @@ class Player:
 					if beta <= alpha:
 						self.numPruned += 1
 						break
+			self.table[str(gameBoard)] = [column, minEval]
 			return column, minEval
-
-	def initTable(self, gameBoard):
-		for i in range(gameBoard.numColumns * gameBoard.numRows):
-			self.table[i] = [0, 0, 0]
-
-	def storeHash(self, index, gameBoard, col, alpha):
-		self.table[index] = [str(gameBoard), col, alpha]
-
-	def getHash(self, index):
-		return self.table[index]
