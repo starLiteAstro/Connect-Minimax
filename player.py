@@ -59,7 +59,7 @@ class Player:
 		else:
 			return self.minimaxAB(gameBoard, 8, False, -math.inf, math.inf)[0] # For player 2 minimaxAB AI
 			#return self.minimaxABIterative(gameBoard, False) # Uncomment this to run iterative deepening for player 2
-	
+
 	def minimaxIterative(self, gameBoard, maxingPlayer):
 		self.iterative = True
 		limit = 10000 # Set limit on the number of nodes expanded per move
