@@ -37,7 +37,7 @@ for i in range(games):
     # and the number of pieces that need to be placed in a line in order to win.
     # g = game.Game(p1, p2, 5, 6, 4)
     # g = game.Game(p1, p2, 5, 6, 3)
-    g = game.Game(p1, p2, 4, 5, 3)
+    # g = game.Game(p1, p2, 4, 5, 3)
     # g = game.Game(p1, p2, 4, 4, 4)
     # g = game.Game(p1, p2, 4, 4, 3)
     g = game.Game(p1, p2, 6, 7, 2)
