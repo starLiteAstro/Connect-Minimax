@@ -164,6 +164,8 @@ class Player:
 		if gameBoard.checkFull():
 			return None, 0
 
+		maxCol = gameBoard.numColumns
+		maxRow = gameBoard.numRows
 		colOrder = []
 		for i in range(maxCol):
 				colOrder.append(math.ceil(maxCol // 2 + (1 - 2 * (i % 2)) * (i + 1) // 2))
