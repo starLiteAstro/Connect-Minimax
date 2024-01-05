@@ -47,62 +47,62 @@ class Player:
 		self.numExpandedPerMove = 0
 		if self.name == 'X':
 			return self.minimax(gameBoard, -1, True)[0] # Set depth to -1 to run a full search (no depth cutoff)
-			#return self.minimaxIterative(gameBoard, True) # Uncomment this to run iterative deepening
+			# return self.minimaxIterative(gameBoard, True) # Uncomment this to run iterative deepening
 		else:
 			return self.minimax(gameBoard, -1, False)[0] # For player 2 minimax AI
-			#return self.minimaxIterative(gameBoard, False) # Uncomment this to run iterative deepening for player 2
+			# return self.minimaxIterative(gameBoard, False) # Uncomment this to run iterative deepening for player 2
 
 	def getMoveAlphaBeta(self, gameBoard):
 		self.numExpandedPerMove = 0
 		if self.name == 'X':
 			return self.minimaxAB(gameBoard, -1, True, -math.inf, math.inf)[0] # Set depth to -1 to run a full search (no depth cutoff)
-			#return self.minimaxABIterative(gameBoard, True) # Uncomment this to run iterative deepening
+			# return self.minimaxABIterative(gameBoard, True) # Uncomment this to run iterative deepening
 		else:
 			return self.minimaxAB(gameBoard, -1, False, -math.inf, math.inf)[0] # For player 2 minimaxAB AI
-			#return self.minimaxABIterative(gameBoard, False) # Uncomment this to run iterative deepening for player 2
+			# return self.minimaxABIterative(gameBoard, False) # Uncomment this to run iterative deepening for player 2
 
 	def minimaxIterative(self, gameBoard, maxingPlayer):
 		self.iterative = True
-		self.transposition = False
-		limit = 10000 # Set limit on the number of nodes expanded per move
-		depth = 2
-		move = random.randint(0, gameBoard.numColumns - 1)
-		while self.numExpandedPerMove < limit: # Run until the limit is reached/exceeded
-			move = self.minimax(gameBoard, depth, maxingPlayer)[0]
+		self.transposition = False # Disabled due to issues with iterative deepening
+		limit = 10000 # Limit on the number of nodes expanded per move
+		depth = 2 # Starting depth
+		column = random.randint(0, gameBoard.numColumns - 1)
+		while self.numExpandedPerMove < limit and depth <= gameBoard.numColumns * gameBoard.numRows: # Run until the limit is reached/exceeded or the max depth is reached (width * height of board)
+			column = self.minimax(gameBoard, depth, maxingPlayer)[0]
+			print(f"Depth {depth}, {self.numExpandedPerMove} nodes expanded, column {column}")
 			depth += 1
-			#print("Depth", depth, "numExpanded", self.numExpandedPerMove)
-		return move
+		return column
 
 	def minimaxABIterative(self, gameBoard, maxingPlayer):
 		self.iterative = True
 		self.transposition = False
 		limit = 10000
 		depth = 2
-		move = random.randint(0, gameBoard.numColumns - 1)
-		while self.numExpandedPerMove < limit:
-			move = self.minimaxAB(gameBoard, depth, maxingPlayer, -math.inf, math.inf)[0]
+		column = random.randint(0, gameBoard.numColumns - 1)
+		while self.numExpandedPerMove < limit and depth <= gameBoard.numColumns * gameBoard.numRows:
+			column = self.minimaxAB(gameBoard, depth, maxingPlayer, -math.inf, math.inf)[0]
+			print(f"Depth {depth}, {self.numExpandedPerMove} nodes expanded, column {column}")
 			depth += 1
-			print("Depth", depth, "numExpanded", self.numExpandedPerMove)
-		return move
+		return column
 
 	def minimax(self, gameBoard, depth, maxingPlayer):
-		if self.transposition:
+		if self.transposition: # Check if transposition table is enabled
 			index = str(gameBoard.gameBoard)
-			if index in self.table:
+			if index in self.table: # Check if board state is in transposition table
 				self.cacheHits += 1
-				return self.table[index][0], self.table[index][1]
+				return self.table[index][0], self.table[index][1] # Return best move and score from table
 
-		if depth == 0 or gameBoard.checkWin():
-			if gameBoard.lastPlay[2] == 'X':
-				if depth <= 0 or self.iterative:
-					return None, 1 # Return 1 for maximising player
+		if depth == 0 or gameBoard.checkWin(): # Check if win or reached depth limit
+			if gameBoard.lastPlay[2] == 'X': # Check if maximising player won
+				if depth < 0:
+					return None, 1 # Return 1 for maximising player (no depth limit)
 				else:
-					return None, 1 / depth # Reduce score by depth to encourage faster wins
+					return None, depth # Higher score for shallower depths to encourage faster wins for maximising player
 			else:
-				if depth <= 0 or self.iterative:
-					return None, -1
+				if depth < 0:
+					return None, -1 # Return -1 for minimising player (no depth limit)
 				else:
-					return None, -1 / depth
+					return None, -depth # Lower score for shallower depths to encourage faster wins for minimising player
 		if gameBoard.checkFull():
 			return None, 0
 
@@ -152,21 +152,21 @@ class Player:
 				self.cacheHits += 1
 				return self.table[index][0], self.table[index][1]
 
-		if depth == 0 or gameBoard.checkWin():
-			if gameBoard.lastPlay[2] == 'X':
-				if depth <= 0 or self.iterative:
-					return None, 1 # Return 1 for maximising player
+		if depth == 0 or gameBoard.checkWin(): # Check if win or reached depth limit
+			if gameBoard.lastPlay[2] == 'X': # Check if maximising player won
+				if depth < 0:
+					return None, 1 # Return 1 for maximising player (no depth limit)
 				else:
-					return None, 1 / depth # Reduce score by depth to encourage faster wins
+					return None, depth # Higher score for shallower depths to encourage faster wins for maximising player
 			else:
-				if depth <= 0 or self.iterative:
+				if depth < 0:
 					return None, -1
 				else:
-					return None, -1 / depth
+					return None, -depth
 
 		if gameBoard.checkFull():
 			return None, 0
-		
+
 		self.numExpanded += 1
 		self.numExpandedPerMove += 1
 		maxCol = gameBoard.numColumns
@@ -186,10 +186,8 @@ class Player:
 					temp.addPiece(col, 'X')
 					eval = self.minimaxAB(temp, depth, False, alpha, beta)[1]
 					if eval > maxEval:
-						#print("MAX: Old column", column, ", new column", col, "depth", depth)
 						column = col
 						maxEval = eval
-					#print("MaxEval", maxEval, "alpha", alpha, "beta", beta)
 					alpha = max(alpha, maxEval)
 					if beta <= alpha:
 						self.numPruned += 1
@@ -206,10 +204,8 @@ class Player:
 					temp.addPiece(col, 'O')
 					eval = self.minimaxAB(temp, depth, True, alpha, beta)[1]
 					if eval < minEval:
-						#print("MIN: Old column", column, ", new column", col, "depth", depth)
 						column = col
 						minEval = eval
-					#print("MinEval", minEval, "alpha", alpha, "beta", beta)
 					beta = min(beta, minEval)
 					if beta <= alpha:
 						self.numPruned += 1

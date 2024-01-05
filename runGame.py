@@ -5,7 +5,7 @@ import randomPlayer
 # Note that you can comment out the following if you don't want to seed the random player differently each run
 from datetime import datetime
 
-games = 100
+games = 1
 wins = 0
 draws = 0
 losses = 0
@@ -29,8 +29,8 @@ for i in range(games):
     #p2 = player.Player("O")
     # Instead of randomly seeding, you can comment out the following line to seed the random player and
     # test with a consistent opponent
-    p2 = randomPlayer.RandomPlayer("O", seed)
-    #p2 = randomPlayer.RandomPlayer("O", 42)
+    #p2 = randomPlayer.RandomPlayer("O", seed)
+    p2 = randomPlayer.RandomPlayer("O", 42)
     #p2 = randomPlayer.userPlayer("O")
 
     # The arguments to game.Game specify the two players, the number of rows, the number of columns
@@ -39,8 +39,9 @@ for i in range(games):
     # g = game.Game(p1, p2, 5, 6, 3)
     # g = game.Game(p1, p2, 4, 5, 3)
     # g = game.Game(p1, p2, 4, 4, 4)
-    # g = game.Game(p1, p2, 4, 4, 3)
-    g = game.Game(p1, p2, 3, 3, 3)
+    g = game.Game(p1, p2, 4, 4, 3)
+    # g = game.Game(p1, p2, 6, 7, 4)
+    # g = game.Game(p1, p2, 3, 3, 3)
 
 # You can pass 'True' to the playGame() method to test your alpha-beta pruning approach, i.e., to make
 # player 1 use alpha-beta. If you want player 2 to use alpha-beta you will need to ensure 
