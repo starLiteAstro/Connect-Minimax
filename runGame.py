@@ -7,7 +7,7 @@ from datetime import datetime
 import time
 import statistics
 
-games = 1
+games = 5
 wins = 0
 draws = 0
 losses = 0
@@ -43,15 +43,15 @@ for i in range(games):
     # g = game.Game(p1, p2, 5, 6, 4)
     # g = game.Game(p1, p2, 5, 6, 3)
     # g = game.Game(p1, p2, 4, 5, 3)
-    # g = game.Game(p1, p2, 4, 4, 4)
-    g = game.Game(p1, p2, 4, 4, 3)
+    g = game.Game(p1, p2, 4, 4, 4)
+    # g = game.Game(p1, p2, 3, 4, 3)
     # g = game.Game(p1, p2, 6, 7, 4)
     # g = game.Game(p1, p2, 3, 3, 2)
 
     # You can pass 'True' to the playGame() method to test your alpha-beta pruning approach, i.e., to make
     # player 1 use alpha-beta. If you want player 2 to use alpha-beta you will need to ensure 
     # that you create player 2 accordingly. 
-    val = g.playGame(True)
+    val = g.playGame(False)
     if val == 1:
         wins += 1
     elif val == -1:
