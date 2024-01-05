@@ -39,7 +39,7 @@ class Player:
 		self.numPruned = 0 # Use this to track the number of times you prune
 		self.iterative = False # Is set to True when running iterative deepening
 		self.numExpandedPerMove = 0 # Tracks the number of nodes expanded per move
-		self.transposition = True # Set to True/False to enable/disable transposition table caching
+		self.transposition = False # Set to True/False to enable/disable transposition table caching
 		self.table = {} # Transposition table
 		self.cacheHits = 0 # Tracks the number of times the transposition table finds a match
 
@@ -47,7 +47,7 @@ class Player:
 		self.numExpandedPerMove = 0
 		if self.name == 'X':
 			return self.minimax(gameBoard, -1, True)[0] # Set depth to -1 to run a full search (no depth cutoff)
-			# return self.minimaxIterative(gameBoard, True) # Uncomment this to run iterative deepening
+			#return self.minimaxIterative(gameBoard, True) # Uncomment this to run iterative deepening
 		else:
 			return self.minimax(gameBoard, -1, False)[0] # For player 2 minimax AI
 			# return self.minimaxIterative(gameBoard, False) # Uncomment this to run iterative deepening for player 2
@@ -56,7 +56,7 @@ class Player:
 		self.numExpandedPerMove = 0
 		if self.name == 'X':
 			return self.minimaxAB(gameBoard, -1, True, -math.inf, math.inf)[0] # Set depth to -1 to run a full search (no depth cutoff)
-			# return self.minimaxABIterative(gameBoard, True) # Uncomment this to run iterative deepening
+			#return self.minimaxABIterative(gameBoard, True) # Uncomment this to run iterative deepening
 		else:
 			return self.minimaxAB(gameBoard, -1, False, -math.inf, math.inf)[0] # For player 2 minimaxAB AI
 			# return self.minimaxABIterative(gameBoard, False) # Uncomment this to run iterative deepening for player 2
@@ -94,15 +94,15 @@ class Player:
 
 		if depth == 0 or gameBoard.checkWin(): # Check if win or reached depth limit
 			if gameBoard.lastPlay[2] == 'X': # Check if maximising player won
-				if depth < 0:
+				if depth < 1:
 					return None, 1 # Return 1 for maximising player (no depth limit)
 				else:
-					return None, depth # Higher score for shallower depths to encourage faster wins for maximising player
+					return None, 1 + depth # Higher score for shallower depths to encourage faster wins for maximising player
 			else:
-				if depth < 0:
+				if depth < 1:
 					return None, -1 # Return -1 for minimising player (no depth limit)
 				else:
-					return None, -depth # Lower score for shallower depths to encourage faster wins for minimising player
+					return None, -1 - depth # Lower score for shallower depths to encourage faster wins for minimising player
 		if gameBoard.checkFull():
 			return None, 0
 
@@ -154,15 +154,15 @@ class Player:
 
 		if depth == 0 or gameBoard.checkWin(): # Check if win or reached depth limit
 			if gameBoard.lastPlay[2] == 'X': # Check if maximising player won
-				if depth < 0:
+				if depth < 1:
 					return None, 1 # Return 1 for maximising player (no depth limit)
 				else:
-					return None, depth # Higher score for shallower depths to encourage faster wins for maximising player
+					return None, 1 + depth # Higher score for shallower depths to encourage faster wins for maximising player
 			else:
-				if depth < 0:
+				if depth < 1:
 					return None, -1
 				else:
-					return None, -depth
+					return None, -1 - depth
 
 		if gameBoard.checkFull():
 			return None, 0
