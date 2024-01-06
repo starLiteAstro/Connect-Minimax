@@ -39,7 +39,7 @@ class Player:
 		self.numPruned = 0 # Use this to track the number of times you prune
 		self.iterative = False # Is set to True when running iterative deepening
 		self.numExpandedPerMove = 0 # Tracks the number of nodes expanded per move
-		self.transposition = False # Set to True/False to enable/disable transposition table caching
+		self.transposition = True # Set to True/False to enable/disable transposition table caching
 		self.table = {} # Transposition table
 		self.cacheHits = 0 # Tracks the number of times the transposition table finds a match
 
