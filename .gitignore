@@ -1,4 +1,5 @@
 report/
+results/
 screenshots/
 __pycache__/
 .DS_Store

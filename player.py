@@ -39,7 +39,7 @@ class Player:
 		self.numPruned = 0 # Use this to track the number of times you prune
 		self.iterative = False # Is set to True when running iterative deepening
 		self.numExpandedPerMove = 0 # Tracks the number of nodes expanded per move
-		self.transposition = True # Set to True/False to enable/disable transposition table caching
+		self.transposition = False # Set to True/False to enable/disable transposition table caching
 		self.table = {} # Transposition table
 		self.cacheHits = 0 # Tracks the number of times the transposition table finds a match
 
@@ -61,30 +61,6 @@ class Player:
 			return self.minimaxAB(gameBoard, -1, False, -math.inf, math.inf)[0] # For player 2 minimaxAB AI
 			# return self.minimaxABIterative(gameBoard, False) # Uncomment this to run iterative deepening for player 2
 
-	def minimaxIterative(self, gameBoard, maxingPlayer):
-		self.iterative = True
-		self.transposition = False # Disabled due to issues with iterative deepening
-		limit = 10000 # Limit on the number of nodes expanded per move
-		depth = 2 # Starting depth
-		column = random.randint(0, gameBoard.numColumns - 1)
-		while self.numExpandedPerMove < limit and depth <= gameBoard.numColumns * gameBoard.numRows: # Run until the limit is reached/exceeded or the max depth is reached (width * height of board)
-			column = self.minimax(gameBoard, depth, maxingPlayer)[0]
-			print(f"Depth {depth}, {self.numExpandedPerMove} nodes expanded, column {column}")
-			depth += 1
-		return column
-
-	def minimaxABIterative(self, gameBoard, maxingPlayer):
-		self.iterative = True
-		self.transposition = False
-		limit = 10000
-		depth = 2
-		column = random.randint(0, gameBoard.numColumns - 1)
-		while self.numExpandedPerMove < limit and depth <= gameBoard.numColumns * gameBoard.numRows:
-			column = self.minimaxAB(gameBoard, depth, maxingPlayer, -math.inf, math.inf)[0]
-			print(f"Depth {depth}, {self.numExpandedPerMove} nodes expanded, column {column}")
-			depth += 1
-		return column
-
 	def minimax(self, gameBoard, depth, maxingPlayer):
 		if self.transposition: # Check if transposition table is enabled
 			index = str(gameBoard.gameBoard)
@@ -98,7 +74,7 @@ class Player:
 					return None, 1 # Return 1 for maximising player (no depth limit)
 				else:
 					return None, 1 + depth # Higher score for shallower depths to encourage faster wins for maximising player
-			else:
+			if gameBoard.lastPlay[2] == 'O':
 				if depth < 1:
 					return None, -1 # Return -1 for minimising player (no depth limit)
 				else:
@@ -158,7 +134,7 @@ class Player:
 					return None, 1 # Return 1 for maximising player (no depth limit)
 				else:
 					return None, 1 + depth # Higher score for shallower depths to encourage faster wins for maximising player
-			else:
+			if gameBoard.lastPlay[2] == 'O':
 				if depth < 1:
 					return None, -1
 				else:
@@ -180,7 +156,7 @@ class Player:
 		if maxingPlayer:
 			maxEval = -math.inf
 			column = random.randint(0, maxCol - 1)
-			for col in colOrder:
+			for col in range(maxCol):
 				if gameBoard.colFills[col] < maxRow:
 					temp = gameBoard.copy()
 					temp.addPiece(col, 'X')
@@ -213,3 +189,27 @@ class Player:
 			if self.transposition:
 				self.table[index] = [column, minEval]
 			return column, minEval
+
+	def minimaxIterative(self, gameBoard, maxingPlayer):
+		self.iterative = True
+		self.transposition = False # Disabled due to issues with iterative deepening
+		limit = 10000 # Limit on the number of nodes expanded per move
+		depth = 2 # Starting depth
+		column = random.randint(0, gameBoard.numColumns - 1)
+		while self.numExpandedPerMove < limit and depth <= gameBoard.numColumns * gameBoard.numRows: # Run until the limit is reached/exceeded or the max depth is reached (width * height of board)
+			column = self.minimax(gameBoard, depth, maxingPlayer)[0]
+			print(f"Depth {depth}, {self.numExpandedPerMove} nodes expanded, column {column}")
+			depth += 1
+		return column
+
+	def minimaxABIterative(self, gameBoard, maxingPlayer):
+		self.iterative = True
+		self.transposition = False
+		limit = 10000
+		depth = 2
+		column = random.randint(0, gameBoard.numColumns - 1)
+		while self.numExpandedPerMove < limit and depth <= gameBoard.numColumns * gameBoard.numRows:
+			column = self.minimaxAB(gameBoard, depth, maxingPlayer, -math.inf, math.inf)[0]
+			print(f"Depth {depth}, {self.numExpandedPerMove} nodes expanded, column {column}")
+			depth += 1
+		return column
