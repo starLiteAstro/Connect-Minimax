@@ -49,9 +49,9 @@ for i in range(games):
     # g = game.Game(p1, p2, 4, 4, 2)
     # g = game.Game(p1, p2, 4, 4, 1)
     # g = game.Game(p1, p2, 3, 4, 3)
-    g = game.Game(p1, p2, 5, 5, 2)
+    # g = game.Game(p1, p2, 5, 5, 2)
     # g = game.Game(p1, p2, 6, 7, 4)
-    # g = game.Game(p1, p2, 3, 3, 3)
+    g = game.Game(p1, p2, 3, 3, 3)
     # g = game.Game(p1, p2, 3, 3, 2)
     # g = game.Game(p1, p2, 2, 3, 2)
     # g = game.Game(p1, p2, 3, 2, 2)
@@ -61,7 +61,7 @@ for i in range(games):
     # You can pass 'True' to the playGame() method to test your alpha-beta pruning approach, i.e., to make
     # player 1 use alpha-beta. If you want player 2 to use alpha-beta you will need to ensure 
     # that you create player 2 accordingly. 
-    val = g.playGame(True)
+    val = g.playGame(False)
     if val == 1:
         wins += 1
     elif val == -1:
@@ -74,5 +74,5 @@ for i in range(games):
     pruned.append(p1.numPruned)
 realEnd = time.time()
 
-print(f"Cache hits: {p1.cacheHits}\nTotal expanded: {sum(expanded)}\nAverage expanded: {sum(expanded) / games}\nExpanded SD: {statistics.stdev(expanded)}\nTotal pruned: {sum(pruned)}\nAverage pruned: {sum(pruned) / games}\nPruned SD: {statistics.stdev(pruned)}")
+print(f"Total expanded: {sum(expanded)}\nAverage expanded: {sum(expanded) / games}\nExpanded SD: {statistics.stdev(expanded)}\nTotal pruned: {sum(pruned)}\nAverage pruned: {sum(pruned) / games}\nPruned SD: {statistics.stdev(pruned)}")
 print(f"Games: {games}\nWins: {wins} ({wins / games * 100}%)\nDraws: {draws} ({draws / games * 100}%)\nLosses: {losses} ({losses / games * 100}%)\nAverage time: {statistics.mean(times)}\nStandard deviation: {statistics.stdev(times)}\nTotal time: {realEnd - realStart}")
