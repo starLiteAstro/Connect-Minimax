@@ -156,7 +156,7 @@ class Player:
 		if maxingPlayer:
 			maxEval = -math.inf
 			column = random.randint(0, maxCol - 1)
-			for col in range(maxCol):
+			for col in colOrder:
 				if gameBoard.colFills[col] < maxRow:
 					temp = gameBoard.copy()
 					temp.addPiece(col, 'X')
@@ -198,7 +198,6 @@ class Player:
 		column = random.randint(0, gameBoard.numColumns - 1)
 		while self.numExpandedPerMove < limit and depth <= gameBoard.numColumns * gameBoard.numRows: # Run until the limit is reached/exceeded or the max depth is reached (width * height of board)
 			column = self.minimax(gameBoard, depth, maxingPlayer)[0]
-			print(f"Depth {depth}, {self.numExpandedPerMove} nodes expanded, column {column}")
 			depth += 1
 		return column
 
@@ -210,6 +209,5 @@ class Player:
 		column = random.randint(0, gameBoard.numColumns - 1)
 		while self.numExpandedPerMove < limit and depth <= gameBoard.numColumns * gameBoard.numRows:
 			column = self.minimaxAB(gameBoard, depth, maxingPlayer, -math.inf, math.inf)[0]
-			print(f"Depth {depth}, {self.numExpandedPerMove} nodes expanded, column {column}")
 			depth += 1
 		return column
