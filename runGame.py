@@ -7,7 +7,7 @@ from datetime import datetime
 import time
 import statistics
 
-games = 10
+games = 100
 wins = 0
 draws = 0
 losses = 0
@@ -49,7 +49,7 @@ for i in range(games):
     # g = game.Game(p1, p2, 4, 4, 2)
     # g = game.Game(p1, p2, 4, 4, 1)
     # g = game.Game(p1, p2, 3, 4, 3)
-    g = game.Game(p1, p2, 4, 4, 3)
+    g = game.Game(p1, p2, 5, 5, 2)
     # g = game.Game(p1, p2, 6, 7, 4)
     # g = game.Game(p1, p2, 3, 3, 3)
     # g = game.Game(p1, p2, 3, 3, 2)
